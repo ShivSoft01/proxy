@@ -1,0 +1,334 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+
+body {
+  font-family: 'Orbitron', monospace;
+  background: #000;
+}
+
+.pixel-text {
+  font-family: 'Orbitron', monospace;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.pixel-glow {
+  text-shadow: 
+    0 0 5px #fff,
+    0 0 10px #fff,
+    0 0 15px #fff,
+    0 0 20px #fff;
+  animation: glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  from { 
+    text-shadow: 
+      0 0 5px #fff, 
+      0 0 10px #fff, 
+      0 0 15px #fff, 
+      0 0 20px #fff; 
+  }
+  to { 
+    text-shadow: 
+      0 0 2px #fff, 
+      0 0 5px #fff, 
+      0 0 8px #fff, 
+      0 0 12px #fff; 
+  }
+}
+
+/* Pixelated text animation */
+.pixelated-text {
+  display: inline-block;
+}
+
+.pixel-char {
+  display: inline-block;
+  animation: pixelPop 0.6s ease-out forwards;
+  opacity: 0;
+  transform: scale(0.5);
+}
+
+@keyframes pixelPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.5) rotate(-5deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2) rotate(2deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@keyframes star-twinkle {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+.star-twinkle {
+  animation: star-twinkle 2s ease-in-out infinite;
+}
+
+/* Audio visualizer animation */
+@keyframes audioBar {
+  0%, 100% {
+    height: 0.75rem;
+    opacity: 0.6;
+  }
+  50% {
+    height: 1.75rem;
+    opacity: 1;
+  }
+}
+
+.audio-visualizer .audio-bar {
+  animation: audioBar 1.2s ease-in-out infinite;
+}
+
+.pixel-button {
+  font-family: 'Orbitron', monospace;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 700;
+  position: relative;
+  overflow: hidden;
+}
+
+.pixel-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s;
+}
+
+.pixel-button:hover::before {
+  left: 100%;
+}
+
+/* Navigation Button Styles */
+.nav-button {
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-button::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.3s ease;
+}
+
+.nav-button:hover::after {
+  left: 100%;
+}
+
+/* Animation Classes */
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(45deg);
+  }
+  to {
+    transform: rotate(405deg);
+  }
+}
+
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Apply animations */
+.slide-down {
+  animation: slideDown 0.8s ease-out;
+}
+
+.subtitle-fade {
+  animation: fadeIn 1s ease-out 0.5s both;
+}
+
+.content-slide {
+  animation: slideUp 0.8s ease-out 0.3s both;
+}
+
+.demo-notice {
+  animation: fadeIn 1s ease-out 1s both;
+}
+
+.section-fade {
+  animation: fadeIn 0.8s ease-out;
+}
+
+.feature-card-slide {
+  animation: slideUp 0.6s ease-out;
+}
+
+.cta-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+.logo-bounce {
+  animation: bounceIn 1s ease-out;
+}
+
+.floating-pixel {
+  animation: float 2s ease-in-out infinite;
+}
+
+.floating-pixel:nth-child(2) {
+  animation-delay: 0.5s;
+}
+
+.floating-pixel:nth-child(3) {
+  animation-delay: 1s;
+}
+
+.floating-pixel:nth-child(4) {
+  animation-delay: 1.5s;
+}
+
+.floating-pixel:nth-child(5) {
+  animation-delay: 2s;
+}
+
+.floating-pixel:nth-child(6) {
+  animation-delay: 2.5s;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #000;
+  border: 2px solid #fff;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #fff;
+  border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #ccc;
+}
+
+/* Pixel grid background effect */
+.pixel-grid {
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* Pixelated borders */
+.pixel-border {
+  border-style: solid;
+  image-rendering: pixelated;
+}
+
+/* Pixel squares for animated elements */
+.pixel-square {
+  image-rendering: pixelated;
+  border-radius: 0;
+}
+
+/* Remove any rounded corners */
+* {
+  border-radius: 0 !important;
+}
+
+/* Ensure all text is pixel-style */
+h1, h2, h3, h4, h5, h6, p, span, div, button, a, input {
+  font-family: 'Orbitron', monospace;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 700;
+}
+
+/* Responsive animations */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
