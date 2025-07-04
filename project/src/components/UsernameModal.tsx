@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { User, X, Loader } from 'lucide-react';
+import { supabase } from '../lib/supabase';
 
 interface UsernameModalProps {
   isOpen: boolean;
@@ -19,7 +20,7 @@ export const UsernameModal: React.FC<UsernameModalProps> = ({
   const [username, setUsername] = useState('');
   const [error, setError] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (isJoining) return;
@@ -44,7 +45,51 @@ export const UsernameModal: React.FC<UsernameModalProps> = ({
       return;
     }
 
+    try {
+      // Check if username already exists
+      const { data: existingUser, error: checkError } = await supabase
+        .from('users')
+        .select('username')
+        .eq('username', username.trim())
+        .single();
+
+      if (checkError && checkError.code !== 'PGRST116') {
+        throw checkError;
+      }
+
+      if (existingUser) {
+        setError('Username already taken. Please choose another one.');
+        return;
+      }
+
+      // Create new user
+      const { data: newUser, error: insertError } = await supabase
+        .from('users')
+        .insert([
+          {
+            username: username.trim(),
+            wallet_address: walletAddress
+          }
+        ])
+        .select()
+        .single();
+
+      if (insertError) {
+        console.error('Error creating user:', insertError);
+        setError('Failed to create user. Please try again.');
+        return;
+      }
+
+      // Store username in localStorage
+      localStorage.setItem('proximity_chat_username', username.trim());
+      localStorage.setItem('proximity_chat_wallet', walletAddress);
+
+      // Call the original onSubmit
     onSubmit(username.trim());
+    } catch (error) {
+      console.error('Error in username submission:', error);
+      setError('An error occurred. Please try again.');
+    }
   };
 
   const getShortAddress = (address: string) => {

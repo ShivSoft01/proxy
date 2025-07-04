@@ -70,7 +70,10 @@ export const WalletButton: React.FC<WalletButtonProps> = ({
           </div>
         </div>
         <button
-          onClick={onWalletConnected}
+          onClick={() => {
+            console.log('ENTER PROXIMITY CHAT button clicked');
+            onWalletConnected();
+          }}
           className={`px-12 py-6 bg-green-400 text-black border-4 border-green-400 font-bold text-xl transform hover:scale-105 transition-all duration-200 hover:shadow-2xl pixel-button hover:bg-black hover:text-green-400 ${className}`}
         >
           ENTER PROXIMITY CHAT

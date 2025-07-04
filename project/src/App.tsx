@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   Mic, 
   MicOff, 
@@ -20,31 +20,238 @@ import {
 import { WalletButton } from './components/WalletButton';
 import { UsernameModal } from './components/UsernameModal';
 import { usePhantomWallet } from './hooks/usePhantomWallet';
-import { useWebRTCVoiceChat } from './hooks/useWebRTCVoiceChat';
+import { supabase, Message, testDatabaseConnection } from './lib/supabase';
+
+// Real-time chat interface
+interface RealTimeChat {
+  users: any[];
+  isConnected: boolean;
+  isMuted: boolean;
+  isDeafened: boolean;
+  currentUser: any;
+  messages: Message[];
+  audioLevel: number;
+  toggleMute: () => void;
+  toggleDeafen: () => void;
+  sendMessage: (message: string) => Promise<void>;
+  leaveRoom: () => void;
+}
 
 function App() {
   const [isInChat, setIsInChat] = useState(false);
   const [showUsernameModal, setShowUsernameModal] = useState(false);
   const [isJoining, setIsJoining] = useState(false);
   const { isConnected, publicKey, disconnectWallet } = usePhantomWallet();
-  const voiceChat = useWebRTCVoiceChat();
+  const [currentUsername, setCurrentUsername] = useState<string | null>(null);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [users, setUsers] = useState<any[]>([]);
+  const [isMuted, setIsMuted] = useState(false);
+  const [isDeafened, setIsDeafened] = useState(false);
+  const [audioLevel, setAudioLevel] = useState(0);
+  
+  // Real-time chat functionality
+  const realTimeChat: RealTimeChat = {
+    users: users,
+    isConnected: true,
+    isMuted: isMuted,
+    isDeafened: isDeafened,
+    currentUser: currentUsername ? {
+      id: 'current',
+      username: currentUsername,
+      walletAddress: publicKey || '0x0000000000000000000000000000000000000000',
+      isSpeaking: false,
+      isConnected: true
+    } : null,
+    messages: messages,
+    audioLevel: audioLevel,
+    toggleMute: () => setIsMuted(!isMuted),
+    toggleDeafen: () => setIsDeafened(!isDeafened),
+    sendMessage: async (message: string) => {
+      if (!currentUsername) {
+        console.error('No current username found');
+        return;
+      }
+      
+      try {
+        console.log('Sending message:', { username: currentUsername, message: message.trim() });
+        
+        const { data, error } = await supabase
+          .from('messages')
+          .insert([
+            {
+              username: currentUsername,
+              message: message.trim()
+            }
+          ])
+          .select();
+
+        if (error) {
+          console.error('Error sending message:', error);
+          alert('Failed to send message. Please try again.');
+        } else {
+          console.log('Message sent successfully:', data);
+        }
+      } catch (error) {
+        console.error('Error sending message:', error);
+        alert('Failed to send message. Please try again.');
+      }
+    },
+    leaveRoom: () => {}
+  };
+
+  // Load existing username from localStorage
+  useEffect(() => {
+    const savedUsername = localStorage.getItem('proximity_chat_username');
+    const savedWallet = localStorage.getItem('proximity_chat_wallet');
+    
+    if (savedUsername && savedWallet && publicKey && savedWallet === publicKey) {
+      setCurrentUsername(savedUsername);
+      // Auto-enter chat if wallet is connected and username exists
+      if (isConnected) {
+        setIsInChat(true);
+      }
+    }
+  }, [isConnected, publicKey]);
+
+  // Test database connection on app load
+  useEffect(() => {
+    testDatabaseConnection().then((isConnected) => {
+      if (!isConnected) {
+        console.error('❌ Database connection failed. Please check your Supabase setup.');
+        alert('Database connection failed. Please check the console for details.');
+      }
+    });
+  }, []);
+
+  // Load messages and set up real-time subscription
+  useEffect(() => {
+    if (!isInChat) return;
+
+    console.log('Setting up real-time subscription...');
+
+    // Load last 50 messages
+    const loadMessages = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('messages')
+          .select('*')
+          .order('created_at', { ascending: true })
+          .limit(50);
+
+        if (error) {
+          console.error('Error loading messages:', error);
+        } else {
+          console.log('Loaded messages:', data);
+          setMessages(data || []);
+        }
+      } catch (error) {
+        console.error('Error loading messages:', error);
+      }
+    };
+
+    loadMessages();
+
+    // Set up real-time subscription
+    const subscription = supabase
+      .channel('messages')
+      .on('postgres_changes', 
+        { event: 'INSERT', schema: 'public', table: 'messages' },
+        (payload) => {
+          console.log('Received new message:', payload);
+          const newMessage = payload.new as Message;
+          setMessages(prev => [...prev, newMessage]);
+        }
+      )
+      .subscribe((status) => {
+        console.log('Subscription status:', status);
+      });
+
+    return () => {
+      console.log('Cleaning up subscription...');
+      subscription.unsubscribe();
+    };
+  }, [isInChat]);
+
+  // Load users
+  useEffect(() => {
+    if (!isInChat) return;
+
+    const loadUsers = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('users')
+          .select('*')
+          .order('created_at', { ascending: true });
+
+        if (error) {
+          console.error('Error loading users:', error);
+        } else {
+          const mockUsers = data?.map(user => ({
+            id: user.id,
+            username: user.username,
+            walletAddress: user.wallet_address || '0x0000000000000000000000000000000000000000',
+            isSpeaking: false,
+            isConnected: true
+          })) || [];
+          
+          setUsers(mockUsers);
+        }
+      } catch (error) {
+        console.error('Error loading users:', error);
+      }
+    };
+
+    loadUsers();
+  }, [isInChat]);
 
   const handleEnterChat = () => {
-    if (isConnected && publicKey) {
-      setShowUsernameModal(true);
-    }
+    console.log('handleEnterChat called', { isConnected, publicKey });
+    
+    // Add a small delay to ensure wallet state is updated
+    setTimeout(() => {
+      console.log('Delayed check:', { isConnected, publicKey });
+      
+      if (!isConnected) {
+        console.log('Wallet not connected');
+        alert('Please connect your wallet first. Make sure Phantom is installed and connected.');
+        return;
+      }
+      
+      if (!publicKey) {
+        console.log('No public key available');
+        alert('Wallet connection incomplete. Please try disconnecting and reconnecting your wallet.');
+        return;
+      }
+
+      // Check if user already has a username
+      const savedUsername = localStorage.getItem('proximity_chat_username');
+      const savedWallet = localStorage.getItem('proximity_chat_wallet');
+      
+      console.log('Checking saved data:', { savedUsername, savedWallet, publicKey });
+      
+      if (savedUsername && savedWallet === publicKey) {
+        // User already has username, go directly to chat
+        console.log('User has saved username, going to chat');
+        setCurrentUsername(savedUsername);
+        setIsInChat(true);
+      } else {
+        // Show username modal
+        console.log('Showing username modal');
+        setShowUsernameModal(true);
+      }
+    }, 100); // Small delay to ensure state is updated
   };
 
   const handleUsernameSubmit = async (username: string) => {
     if (publicKey && !isJoining) {
       setIsJoining(true);
       try {
-        await voiceChat.joinRoom(username, publicKey, 'general-voice');
+        setCurrentUsername(username);
         setShowUsernameModal(false);
         setIsInChat(true);
       } catch (error) {
         console.error('Failed to join voice chat:', error);
-        alert('Failed to join voice chat. Please check your microphone permissions and try again.');
+        alert('Failed to join voice chat. Please try again.');
       } finally {
         setIsJoining(false);
       }
@@ -52,14 +259,16 @@ function App() {
   };
 
   const handleDisconnectCall = async () => {
-    voiceChat.leaveRoom();
     setIsInChat(false);
+    setCurrentUsername(null);
+    localStorage.removeItem('proximity_chat_username');
+    localStorage.removeItem('proximity_chat_wallet');
     await disconnectWallet();
   };
 
-  if (isInChat && voiceChat.isConnected) {
+  if (isInChat && realTimeChat.isConnected) {
     return <VoiceChatInterface 
-      voiceChat={voiceChat}
+      voiceChat={realTimeChat}
       onDisconnect={handleDisconnectCall}
     />;
   }
@@ -354,14 +563,23 @@ function VoiceChatInterface({
   voiceChat,
   onDisconnect 
 }: { 
-  voiceChat: ReturnType<typeof useWebRTCVoiceChat>;
+  voiceChat: RealTimeChat;
   onDisconnect: () => void;
 }) {
   const [message, setMessage] = useState('');
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const sendMessage = () => {
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [voiceChat.messages]);
+
+  const sendMessage = async () => {
     if (message.trim()) {
-      voiceChat.sendMessage(message.trim());
+      await voiceChat.sendMessage(message.trim());
       setMessage('');
     }
   };
@@ -605,16 +823,16 @@ function VoiceChatInterface({
                 <div className="flex-1 min-w-0">
                   <div className="flex items-baseline space-x-3 mb-2">
                     <span className="font-bold text-white pixel-text group-hover:text-black">{msg.username}</span>
-                    {msg.walletAddress !== 'SYSTEM' && (
-                      <span className="text-xs text-gray-400 pixel-text group-hover:text-gray-600">{getShortAddress(msg.walletAddress)}</span>
-                    )}
-                    <span className="text-xs text-gray-500 pixel-text group-hover:text-gray-600">{msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                    <span className="text-xs text-gray-500 pixel-text group-hover:text-gray-600">
+                      {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </span>
                   </div>
                   <p className="text-gray-300 pixel-text group-hover:text-black break-words">{msg.message}</p>
                 </div>
               </div>
             </div>
           ))}
+          <div ref={messagesEndRef} />
         </div>
 
         {/* Message Input */}
