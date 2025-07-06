@@ -15,7 +15,8 @@ import {
   Crown,
   Headphones,
   HeadphonesIcon,
-  LogOut
+  LogOut,
+  Twitter
 } from 'lucide-react';
 import { WalletButton } from './components/WalletButton';
 import { UsernameModal } from './components/UsernameModal';
@@ -424,7 +425,8 @@ function LandingPage({ onWalletConnected }: { onWalletConnected: () => void }) {
       {/* Header */}
       <header className="relative z-10 p-6 border-b-4 border-white pixel-border slide-down">
         <nav className="flex justify-between items-center max-w-7xl mx-auto">
-          <div className="flex items-center space-x-6 logo-bounce">
+          {/* $PROXIMITY Logo moved much further to the left */}
+          <div className="flex items-center space-x-6 logo-bounce -ml-24">
             <PixelAudioIcon />
             <h1 className="text-4xl md:text-5xl font-bold text-white tracking-wider pixel-text">$PROXIMITY</h1>
             <PixelMicrophoneIcon />
@@ -450,6 +452,11 @@ function LandingPage({ onWalletConnected }: { onWalletConnected: () => void }) {
                 <span>DISCONNECT</span>
               </button>
             )}
+            
+            {/* Twitter/X Icon moved to the far right side */}
+            <div className="flex items-center ml-6">
+              <Twitter className="w-8 h-8 text-white hover:text-blue-400 transition-colors duration-300 cursor-pointer" />
+            </div>
           </div>
         </nav>
       </header>
@@ -477,7 +484,7 @@ function LandingPage({ onWalletConnected }: { onWalletConnected: () => void }) {
           <div className="border-2 border-white bg-black p-6 mb-12 pixel-border content-slide">
             <p className="text-lg md:text-xl max-w-3xl mx-auto leading-relaxed pixel-text min-h-[3rem] flex items-center justify-center">
               <TypewriterText 
-                text="OWN 1M TOKENS ENTER THE PROXIMITY....." 
+                text="OWN TOKENS TO ENTER THE PROXIMITY" 
                 speed={60}
                 delay={3000}
               />
@@ -495,7 +502,25 @@ function LandingPage({ onWalletConnected }: { onWalletConnected: () => void }) {
             </div>
           )}
 
-          <WalletButton onWalletConnected={onWalletConnected} />
+          {isConnected && (
+            <div className="border-2 border-green-400 bg-black p-4 mb-8 pixel-border">
+              <div className="flex items-center justify-center space-x-2 mb-4">
+                <Wallet className="w-5 h-5 text-green-400" />
+                <p className="text-green-400 pixel-text font-bold">
+                  WALLET CONNECTED
+                </p>
+              </div>
+              <button
+                onClick={disconnectWallet}
+                className="px-6 py-3 border-2 border-red-600 bg-red-600 text-white hover:bg-black hover:text-red-600 transition-all duration-300 pixel-text transform hover:scale-105 flex items-center space-x-2 mx-auto"
+              >
+                <LogOut className="w-4 h-4" />
+                <span>DISCONNECT WALLET</span>
+              </button>
+            </div>
+          )}
+
+          {!isConnected && <WalletButton onWalletConnected={onWalletConnected} />}
         </div>
       </section>
 
@@ -512,12 +537,12 @@ function LandingPage({ onWalletConnected }: { onWalletConnected: () => void }) {
             <FeatureCard
               icon={<Shield className="w-12 h-12" />}
               title="VERIFIED HOLDERS ONLY"
-              description="SMART CONTRACT VERIFICATION ENSURES ONLY REAL MEME COIN HOLDERS WITH 1M+ TOKENS CAN ENTER THE CHAT ROOMS."
+              description="SMART CONTRACT VERIFICATION ENSURES ONLY REAL COIN HOLDERS WITH TOKENS CAN ENTER THE PROXIMITY"
             />
             <FeatureCard
               icon={<MessageCircle className="w-12 h-12" />}
               title="VOICE & TEXT CHAT"
-              description="COMMUNICATE WITH FELLOW HOLDERS THROUGH HIGH-QUALITY VOICE CHAT AND REAL-TIME TEXT MESSAGING."
+              description="TALK WITH OTHER TRADERS THROUGH VOICE CHAT AND REAL-TIME TEXT MESSAGING."
             />
           </div>
         </div>
@@ -621,9 +646,6 @@ function VoiceChatInterface({
           P
         </div>
         <div className="w-8 h-1 bg-white pixel-square"></div>
-        <div className="w-12 h-12 bg-black border-2 border-white flex items-center justify-center text-white hover:bg-white hover:text-black transition-all cursor-pointer pixel-border pixel-text">
-          +
-        </div>
       </div>
 
       {/* Channel Sidebar */}
@@ -651,14 +673,6 @@ function VoiceChatInterface({
                 <div className="ml-auto flex items-center">
                   <Users className="w-4 h-4 mr-1" />
                   <span className="text-sm font-bold pixel-text">{voiceChat.users.length + (voiceChat.currentUser ? 1 : 0)}</span>
-                </div>
-              </div>
-              <div className="flex items-center p-3 bg-black text-white border-2 border-yellow-400 pixel-border hover:bg-yellow-400 hover:text-black transition-colors cursor-pointer">
-                <Crown className="w-4 h-4 mr-2" />
-                <span className="text-sm font-bold pixel-text">50M PLUS ROOM</span>
-                <div className="ml-auto flex items-center">
-                  <Users className="w-4 h-4 mr-1" />
-                  <span className="text-sm font-bold pixel-text">0</span>
                 </div>
               </div>
             </div>
@@ -751,6 +765,14 @@ function VoiceChatInterface({
           <div className="border-2 border-white bg-black p-3 pixel-border">
             {voiceChat.currentUser && (
               <>
+                {/* Online Users Count */}
+                <div className="flex items-center justify-center mb-3 p-2 border-2 border-green-400 bg-green-900/20 pixel-border">
+                  <Users className="w-4 h-4 mr-2 text-green-400" />
+                  <span className="text-sm font-bold text-green-400 pixel-text">
+                    {voiceChat.users.length + (voiceChat.currentUser ? 1 : 0)} ONLINE
+                  </span>
+                </div>
+                
                 <div className="flex items-center mb-3">
                   <div className="w-8 h-8 bg-green-400 text-black flex items-center justify-center text-sm border-2 border-green-400 pixel-border">
                     🎮
@@ -761,27 +783,15 @@ function VoiceChatInterface({
                   </div>
                 </div>
                 <div className="flex space-x-2">
-                  <button
-                    onClick={voiceChat.toggleMute}
-                    className={`flex-1 p-2 border-2 pixel-border transition-colors pixel-text text-sm font-bold flex items-center justify-center space-x-2 ${
-                      voiceChat.isMuted 
-                        ? 'bg-red-600 text-white hover:bg-black hover:text-red-600 border-red-600' 
-                        : 'bg-green-600 text-white hover:bg-black hover:text-green-600 border-green-600'
-                    }`}
+                  {/* JOIN Telegram Button */}
+                  <a
+                    href="https://t.me/+O1ycw8Fcp8AyYTJh"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 p-2 border-2 border-green-600 bg-green-600 text-white hover:bg-black hover:text-green-600 transition-colors pixel-border pixel-text text-sm font-bold flex items-center justify-center space-x-2"
                   >
-                    {voiceChat.isMuted ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
-                    <span>{voiceChat.isMuted ? 'MUTED' : 'LIVE'}</span>
-                  </button>
-                  <button
-                    onClick={voiceChat.toggleDeafen}
-                    className={`p-2 border-2 border-white pixel-border transition-colors ${
-                      voiceChat.isDeafened 
-                        ? 'bg-red-600 text-white hover:bg-black hover:text-red-600 border-red-600' 
-                        : 'bg-black text-white hover:bg-white hover:text-black'
-                    }`}
-                  >
-                    {voiceChat.isDeafened ? <HeadphonesIcon className="w-4 h-4" /> : <Headphones className="w-4 h-4" />}
-                  </button>
+                    <span>JOIN</span>
+                  </a>
                   <button className="p-2 border-2 border-white bg-black text-white hover:bg-white hover:text-black transition-colors pixel-border">
                     <Settings className="w-4 h-4" />
                   </button>
@@ -803,7 +813,7 @@ function VoiceChatInterface({
         {/* Chat Header */}
         <div className="p-4 border-b-4 border-white bg-black pixel-border flex items-center">
           <Hash className="w-6 h-6 mr-2 text-white" />
-          <h3 className="font-bold text-white pixel-text">GENERAL-CHAT</h3>
+          <h3 className="font-bold text-white pixel-text">#PROXIMITY-CHAT</h3>
           <div className="ml-auto flex items-center space-x-4">
             <div className="flex items-center text-sm border-2 border-white bg-black px-3 py-1 pixel-border">
               <Users className="w-4 h-4 mr-2 text-white" />
