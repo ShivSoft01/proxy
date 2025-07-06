@@ -3,15 +3,15 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
+// Simple fallback to prevent errors
+const finalUrl = supabaseUrl || 'https://placeholder.supabase.co';
+const finalKey = supabaseAnonKey || 'placeholder-key';
+
 if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('Missing Supabase environment variables:');
-  console.error('- VITE_SUPABASE_URL:', supabaseUrl ? '✅ Set' : '❌ Missing');
-  console.error('- VITE_SUPABASE_ANON_KEY:', supabaseAnonKey ? '✅ Set' : '❌ Missing');
-  console.error('Please check your .env file and ensure both variables are set.');
-  throw new Error('Missing Supabase environment variables. Please check your .env file.');
+  console.warn('⚠️ Supabase environment variables not set. Using placeholder values.');
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = createClient(finalUrl, finalKey);
 
 // Database types
 export interface User {

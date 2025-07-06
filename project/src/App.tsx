@@ -455,7 +455,14 @@ function LandingPage({ onWalletConnected }: { onWalletConnected: () => void }) {
             
             {/* Twitter/X Icon moved to the far right side */}
             <div className="flex items-center ml-6">
-              <Twitter className="w-8 h-8 text-white hover:text-blue-400 transition-colors duration-300 cursor-pointer" />
+              <a 
+                href="https://x.com/proximity_chatsol" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-white hover:text-blue-400 transition-colors duration-300 cursor-pointer"
+              >
+                <Twitter className="w-8 h-8" />
+              </a>
             </div>
           </div>
         </nav>
@@ -510,13 +517,21 @@ function LandingPage({ onWalletConnected }: { onWalletConnected: () => void }) {
                   WALLET CONNECTED
                 </p>
               </div>
-              <button
-                onClick={disconnectWallet}
-                className="px-6 py-3 border-2 border-red-600 bg-red-600 text-white hover:bg-black hover:text-red-600 transition-all duration-300 pixel-text transform hover:scale-105 flex items-center space-x-2 mx-auto"
-              >
-                <LogOut className="w-4 h-4" />
-                <span>DISCONNECT WALLET</span>
-              </button>
+              <div className="flex flex-col space-y-3">
+                <button
+                  onClick={onWalletConnected}
+                  className="px-8 py-4 border-2 border-white bg-black text-white hover:bg-white hover:text-black transition-all duration-300 pixel-text transform hover:scale-105 flex items-center justify-center space-x-2 font-bold text-lg"
+                >
+                  <span>ENTER PROXIMITY CHAT</span>
+                </button>
+                <button
+                  onClick={disconnectWallet}
+                  className="px-6 py-3 border-2 border-red-600 bg-red-600 text-white hover:bg-black hover:text-red-600 transition-all duration-300 pixel-text transform hover:scale-105 flex items-center space-x-2 mx-auto"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span>DISCONNECT WALLET</span>
+                </button>
+              </div>
             </div>
           )}
 
