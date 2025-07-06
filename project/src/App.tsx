@@ -9,7 +9,7 @@ import {
   MessageCircle,
   Volume2,
   Settings,
-  Send,
+  Send, 
   Hash,
   VolumeX,
   Crown,
@@ -22,8 +22,8 @@ import { WalletButton } from './components/WalletButton';
 import { UsernameModal } from './components/UsernameModal';
 import { usePhantomWallet } from './hooks/usePhantomWallet';
 import { supabase, Message, testDatabaseConnection } from './lib/supabase';
-
-// Real-time chat interface
+//e
+// Real-time chat interfacerrrr
 interface RealTimeChat {
   users: any[];
   isConnected: boolean;
