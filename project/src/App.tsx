@@ -491,7 +491,7 @@ function LandingPage({ onWalletConnected }: { onWalletConnected: () => void }) {
           <div className="border-2 border-white bg-black p-6 mb-12 pixel-border content-slide">
             <p className="text-lg md:text-xl max-w-3xl mx-auto leading-relaxed pixel-text min-h-[3rem] flex items-center justify-center">
               <TypewriterText 
-                text="OWN TOKENS TO ENTER THE PROXIMITY" 
+                text="OWN TOKENS TO ENTER THE PROXIMITY CHAT" 
                 speed={60}
                 delay={3000}
               />

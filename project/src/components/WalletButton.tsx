@@ -22,11 +22,6 @@ export const WalletButton: React.FC<WalletButtonProps> = ({
   } = usePhantomWallet();
 
   const handleConnect = async () => {
-    if (!isPhantomInstalled) {
-      window.open('https://phantom.app/', '_blank');
-      return;
-    }
-
     const success = await connectWallet();
     if (success) {
       onWalletConnected();
@@ -40,14 +35,14 @@ export const WalletButton: React.FC<WalletButtonProps> = ({
           onClick={handleConnect}
           className={`group relative px-12 py-6 bg-white text-black border-4 border-white font-bold text-xl transform hover:scale-105 transition-all duration-200 hover:shadow-2xl pixel-button hover:bg-black hover:text-white ${className}`}
         >
-          <ExternalLink className="inline-block w-6 h-6 mr-3" />
-          INSTALL PHANTOM WALLET
+          <Wallet className="inline-block w-6 h-6 mr-3" />
+          CONNECT PHANTOM WALLET
         </button>
-        <div className="mt-6 border-2 border-red-600 bg-black p-3 inline-block pixel-border">
+        <div className="mt-6 border-2 border-yellow-600 bg-black p-3 inline-block pixel-border">
           <div className="flex items-center space-x-2">
-            <AlertCircle className="w-4 h-4 text-red-400" />
-            <p className="text-sm text-red-400 pixel-text">
-              PHANTOM WALLET NOT DETECTED
+            <AlertCircle className="w-4 h-4 text-yellow-400" />
+            <p className="text-sm text-yellow-400 pixel-text">
+              PHANTOM WALLET REQUIRED - INSTALL FROM PHANTOM.APP
             </p>
           </div>
         </div>
