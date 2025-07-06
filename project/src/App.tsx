@@ -42,7 +42,6 @@ function App() {
   const [isInChat, setIsInChat] = useState(false);
   const [showUsernameModal, setShowUsernameModal] = useState(false);
   const [isJoining, setIsJoining] = useState(false);
-  const { isConnected, publicKey, disconnectWallet } = usePhantomWallet();
   const [currentUsername, setCurrentUsername] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [users, setUsers] = useState<any[]>([]);
@@ -59,7 +58,7 @@ function App() {
     currentUser: currentUsername ? {
       id: 'current',
       username: currentUsername,
-      walletAddress: publicKey || '0x0000000000000000000000000000000000000000',
+      walletAddress: '0x0000000000000000000000000000000000000000',
       isSpeaking: false,
       isConnected: true
     } : null,
@@ -103,16 +102,11 @@ function App() {
   // Load existing username from localStorage
   useEffect(() => {
     const savedUsername = localStorage.getItem('proximity_chat_username');
-    const savedWallet = localStorage.getItem('proximity_chat_wallet');
     
-    if (savedUsername && savedWallet && publicKey && savedWallet === publicKey) {
+    if (savedUsername) {
       setCurrentUsername(savedUsername);
-      // Auto-enter chat if wallet is connected and username exists
-      if (isConnected) {
-        setIsInChat(true);
-      }
     }
-  }, [isConnected, publicKey]);
+  }, []);
 
   // Test database connection on app load
   useEffect(() => {
@@ -206,45 +200,27 @@ function App() {
   }, [isInChat]);
 
   const handleEnterChat = () => {
-    console.log('handleEnterChat called', { isConnected, publicKey });
+    console.log('handleEnterChat called');
     
-    // Add a small delay to ensure wallet state is updated
-    setTimeout(() => {
-      console.log('Delayed check:', { isConnected, publicKey });
-      
-      if (!isConnected) {
-        console.log('Wallet not connected');
-        alert('Please connect your wallet first. Make sure Phantom is installed and connected.');
-        return;
-      }
-      
-      if (!publicKey) {
-        console.log('No public key available');
-        alert('Wallet connection incomplete. Please try disconnecting and reconnecting your wallet.');
-        return;
-      }
-
-      // Check if user already has a username
-      const savedUsername = localStorage.getItem('proximity_chat_username');
-      const savedWallet = localStorage.getItem('proximity_chat_wallet');
-      
-      console.log('Checking saved data:', { savedUsername, savedWallet, publicKey });
-      
-      if (savedUsername && savedWallet === publicKey) {
-        // User already has username, go directly to chat
-        console.log('User has saved username, going to chat');
-        setCurrentUsername(savedUsername);
-        setIsInChat(true);
-      } else {
-        // Show username modal
-        console.log('Showing username modal');
-        setShowUsernameModal(true);
-      }
-    }, 100); // Small delay to ensure state is updated
+    // Check if user already has a username
+    const savedUsername = localStorage.getItem('proximity_chat_username');
+    
+    console.log('Checking saved data:', { savedUsername });
+    
+    if (savedUsername) {
+      // User already has username, go directly to chat
+      console.log('User has saved username, going to chat');
+      setCurrentUsername(savedUsername);
+      setIsInChat(true);
+    } else {
+      // Show username modal
+      console.log('Showing username modal');
+      setShowUsernameModal(true);
+    }
   };
 
   const handleUsernameSubmit = async (username: string) => {
-    if (publicKey && !isJoining) {
+    if (!isJoining) {
       setIsJoining(true);
       try {
         setCurrentUsername(username);
@@ -263,8 +239,6 @@ function App() {
     setIsInChat(false);
     setCurrentUsername(null);
     localStorage.removeItem('proximity_chat_username');
-    localStorage.removeItem('proximity_chat_wallet');
-    await disconnectWallet();
   };
 
   if (isInChat && realTimeChat.isConnected) {
@@ -276,10 +250,10 @@ function App() {
 
   return (
     <>
-      <LandingPage onWalletConnected={handleEnterChat} />
+      <LandingPage onEnterRoom={handleEnterChat} />
       <UsernameModal
         isOpen={showUsernameModal}
-        walletAddress={publicKey || ''}
+        walletAddress=""
         onSubmit={handleUsernameSubmit}
         onClose={() => {
           setShowUsernameModal(false);
@@ -404,8 +378,7 @@ function AudioLevelIndicator({ level, isSpeaking }: { level: number; isSpeaking:
   );
 }
 
-function LandingPage({ onWalletConnected }: { onWalletConnected: () => void }) {
-  const { isConnected, disconnectWallet } = usePhantomWallet();
+function LandingPage({ onEnterRoom }: { onEnterRoom: () => void }) {
 
   return (
     <div className="min-h-screen bg-black text-white overflow-hidden pixel-grid">
@@ -443,15 +416,6 @@ function LandingPage({ onWalletConnected }: { onWalletConnected: () => void }) {
                 COMMUNITY
               </button>
             </div>
-            {isConnected && (
-              <button
-                onClick={disconnectWallet}
-                className="px-4 py-2 border-2 border-red-600 bg-red-600 text-white hover:bg-black hover:text-red-600 transition-all duration-300 pixel-text transform hover:scale-105 flex items-center space-x-2"
-              >
-                <LogOut className="w-4 h-4" />
-                <span>DISCONNECT</span>
-              </button>
-            )}
             
             {/* Twitter/X Icon moved to the far right side */}
             <div className="flex items-center ml-6">
@@ -491,36 +455,12 @@ function LandingPage({ onWalletConnected }: { onWalletConnected: () => void }) {
             </p>
           </div>
 
-          {!isConnected && (
-            <div className="border-2 border-yellow-400 bg-black p-4 mb-8 pixel-border">
-              <div className="flex items-center justify-center space-x-2">
-                <Wallet className="w-5 h-5 text-yellow-400" />
-                <p className="text-yellow-400 pixel-text font-bold">
-                  CONNECT WALLET TO ACCESS PROXIMITY CHAT
-                </p>
-              </div>
-            </div>
-          )}
-
-          {isConnected && (
-            <div className="border-2 border-green-400 bg-black p-4 mb-8 pixel-border">
-              <div className="flex items-center justify-center space-x-2 mb-4">
-                <Wallet className="w-5 h-5 text-green-400" />
-                <p className="text-green-400 pixel-text font-bold">
-                  WALLET CONNECTED
-                </p>
-              </div>
-              <button
-                onClick={disconnectWallet}
-                className="px-6 py-3 border-2 border-red-600 bg-red-600 text-white hover:bg-black hover:text-red-600 transition-all duration-300 pixel-text transform hover:scale-105 flex items-center space-x-2 mx-auto"
-              >
-                <LogOut className="w-4 h-4" />
-                <span>DISCONNECT WALLET</span>
-              </button>
-            </div>
-          )}
-
-          {!isConnected && <WalletButton onWalletConnected={onWalletConnected} />}
+          <button
+            onClick={onEnterRoom}
+            className="px-12 py-6 bg-green-600 text-white border-4 border-green-600 font-bold text-xl transform hover:scale-105 transition-all duration-200 hover:shadow-2xl pixel-button hover:bg-black hover:text-green-600"
+          >
+            ENTER THE ROOM
+          </button>
         </div>
       </section>
 
@@ -560,7 +500,12 @@ function LandingPage({ onWalletConnected }: { onWalletConnected: () => void }) {
                 JOIN THE FUTURE OF CRYPTO COMMUNICATION. CONNECT WITH HOLDERS, SHARE ALPHA, AND BUILD THE COMMUNITY.
               </p>
             </div>
-            <WalletButton onWalletConnected={onWalletConnected} />
+            <button
+              onClick={onEnterRoom}
+              className="px-12 py-6 bg-green-600 text-white border-4 border-green-600 font-bold text-xl transform hover:scale-105 transition-all duration-200 hover:shadow-2xl pixel-button hover:bg-black hover:text-green-600"
+            >
+              ENTER THE ROOM
+            </button>
           </div>
         </div>
       </section>
