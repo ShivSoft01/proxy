@@ -404,6 +404,27 @@ function AudioLevelIndicator({ level, isSpeaking }: { level: number; isSpeaking:
   );
 }
 
+function LoadingCA() {
+  const [dots, setDots] = useState('');
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setDots(prev => prev.length >= 3 ? '' : prev + '.');
+    }, 500);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="border-2 border-white bg-white p-4 mb-8 pixel-border">
+      <div className="flex items-center justify-center space-x-2">
+        <span className="text-black pixel-text font-bold">CA:</span>
+        <span className="text-black pixel-text font-bold">Loading{dots}</span>
+      </div>
+    </div>
+  );
+}
+
 function LandingPage({ onWalletConnected }: { onWalletConnected: () => void }) {
   const { isConnected, disconnectWallet } = usePhantomWallet();
 
@@ -456,7 +477,7 @@ function LandingPage({ onWalletConnected }: { onWalletConnected: () => void }) {
             {/* Twitter/X Icon moved to the far right side */}
             <div className="flex items-center ml-6">
               <a 
-                href="https://x.com/proximity_chatsol" 
+                href="https://x.com/proximitysolana" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-white hover:text-blue-400 transition-colors duration-300 cursor-pointer"
@@ -536,6 +557,9 @@ function LandingPage({ onWalletConnected }: { onWalletConnected: () => void }) {
           )}
 
           {!isConnected && <WalletButton onWalletConnected={onWalletConnected} />}
+          
+          {/* CA Loading Box */}
+          <LoadingCA />
         </div>
       </section>
 
