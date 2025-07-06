@@ -559,7 +559,9 @@ function LandingPage({ onWalletConnected }: { onWalletConnected: () => void }) {
           {!isConnected && <WalletButton onWalletConnected={onWalletConnected} />}
           
           {/* CA Loading Box */}
-          <LoadingCA />
+          <div className="mt-12">
+            <LoadingCA />
+          </div>
         </div>
       </section>
 
