@@ -38,10 +38,10 @@ export const WalletButton: React.FC<WalletButtonProps> = ({
           <Wallet className="inline-block w-6 h-6 mr-3" />
           CONNECT PHANTOM WALLET
         </button>
-        <div className="mt-6 border-2 border-yellow-600 bg-black p-3 inline-block pixel-border">
+        <div className="mt-6 border-2 border-white bg-black p-3 inline-block pixel-border">
           <div className="flex items-center space-x-2">
-            <AlertCircle className="w-4 h-4 text-yellow-400" />
-            <p className="text-sm text-yellow-400 pixel-text">
+            <AlertCircle className="w-4 h-4 text-white" />
+            <p className="text-sm text-white pixel-text">
               PHANTOM WALLET REQUIRED - INSTALL FROM PHANTOM.APP
             </p>
           </div>
@@ -53,10 +53,10 @@ export const WalletButton: React.FC<WalletButtonProps> = ({
   if (isConnected && publicKey) {
     return (
       <div className="text-center">
-        <div className="border-4 border-green-400 bg-black p-6 pixel-border mb-4">
+        <div className="border-4 border-white bg-black p-6 pixel-border mb-4">
           <div className="flex items-center justify-center space-x-3 mb-3">
-            <div className="w-3 h-3 bg-green-400 pixel-square animate-pulse"></div>
-            <span className="text-green-400 pixel-text font-bold">WALLET CONNECTED</span>
+            <div className="w-3 h-3 bg-white pixel-square animate-pulse"></div>
+            <span className="text-white pixel-text font-bold">WALLET CONNECTED</span>
           </div>
           <div className="border-2 border-white bg-black p-3 pixel-border">
             <p className="text-white pixel-text text-sm">
@@ -66,12 +66,12 @@ export const WalletButton: React.FC<WalletButtonProps> = ({
         </div>
         <button
           onClick={() => {
-            console.log('ENTER PROXIMITY CHAT button clicked');
+            console.log('ENTER BONK CHAT button clicked');
             onWalletConnected();
           }}
-          className={`px-12 py-6 bg-green-400 text-black border-4 border-green-400 font-bold text-xl transform hover:scale-105 transition-all duration-200 hover:shadow-2xl pixel-button hover:bg-black hover:text-green-400 ${className}`}
+          className={`px-12 py-6 bg-white text-black border-4 border-white font-bold text-xl transform hover:scale-105 transition-all duration-200 hover:shadow-2xl pixel-button hover:bg-black hover:text-white ${className}`}
         >
-          ENTER PROXIMITY CHAT
+          ENTER BONKCHAT
         </button>
       </div>
     );
@@ -89,10 +89,10 @@ export const WalletButton: React.FC<WalletButtonProps> = ({
       </button>
       
       {error && (
-        <div className="mt-6 border-2 border-red-600 bg-black p-3 inline-block pixel-border">
+        <div className="mt-6 border-2 border-white bg-black p-3 inline-block pixel-border">
           <div className="flex items-center space-x-2">
-            <AlertCircle className="w-4 h-4 text-red-400" />
-            <p className="text-sm text-red-400 pixel-text">
+            <AlertCircle className="w-4 h-4 text-white" />
+            <p className="text-sm text-white pixel-text">
               {error.toUpperCase()}
             </p>
           </div>

@@ -102,8 +102,8 @@ function App() {
 
   // Load existing username from localStorage
   useEffect(() => {
-    const savedUsername = localStorage.getItem('proximity_chat_username');
-    const savedWallet = localStorage.getItem('proximity_chat_wallet');
+    const savedUsername = localStorage.getItem('bonk_chat_username');
+    const savedWallet = localStorage.getItem('bonk_chat_wallet');
     
     if (savedUsername && savedWallet && publicKey && savedWallet === publicKey) {
       setCurrentUsername(savedUsername);
@@ -225,8 +225,8 @@ function App() {
       }
 
       // Check if user already has a username
-      const savedUsername = localStorage.getItem('proximity_chat_username');
-      const savedWallet = localStorage.getItem('proximity_chat_wallet');
+      const savedUsername = localStorage.getItem('bonk_chat_username');
+      const savedWallet = localStorage.getItem('bonk_chat_wallet');
       
       console.log('Checking saved data:', { savedUsername, savedWallet, publicKey });
       
@@ -262,8 +262,8 @@ function App() {
   const handleDisconnectCall = async () => {
     setIsInChat(false);
     setCurrentUsername(null);
-    localStorage.removeItem('proximity_chat_username');
-    localStorage.removeItem('proximity_chat_wallet');
+    localStorage.removeItem('bonk_chat_username');
+    localStorage.removeItem('bonk_chat_wallet');
     await disconnectWallet();
   };
 
@@ -446,10 +446,10 @@ function LandingPage({ onWalletConnected }: { onWalletConnected: () => void }) {
       {/* Header */}
       <header className="relative z-10 p-6 border-b-4 border-white pixel-border slide-down">
         <nav className="flex justify-between items-center max-w-7xl mx-auto">
-          {/* $PROXIMITY Logo moved much further to the left */}
+          {/* $BONK CHAT Logo moved much further to the left */}
           <div className="flex items-center space-x-6 logo-bounce -ml-24">
             <PixelAudioIcon />
-            <h1 className="text-4xl md:text-5xl font-bold text-white tracking-wider pixel-text">$PROXIMITY</h1>
+            <h1 className="text-4xl md:text-5xl font-bold text-white tracking-wider pixel-text">$BONKCHAT</h1>
             <PixelMicrophoneIcon />
           </div>
           <div className="flex items-center space-x-4">
@@ -473,18 +473,6 @@ function LandingPage({ onWalletConnected }: { onWalletConnected: () => void }) {
                 <span>DISCONNECT</span>
               </button>
             )}
-            
-            {/* Twitter/X Icon moved to the far right side */}
-            <div className="flex items-center ml-6">
-              <a 
-                href="https://x.com/proximitysolana" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-white hover:text-blue-400 transition-colors duration-300 cursor-pointer"
-              >
-                <Twitter className="w-8 h-8" />
-              </a>
-            </div>
           </div>
         </nav>
       </header>
@@ -496,35 +484,41 @@ function LandingPage({ onWalletConnected }: { onWalletConnected: () => void }) {
             <div className="flex items-center justify-center space-x-6 mb-4">
               <PixelAudioIcon />
               <h2 className="text-6xl md:text-8xl font-bold text-white pixel-text pixel-glow">
-                PROXIMITY
+                BONKCHAT
               </h2>
               <PixelMicrophoneIcon />
             </div>
-            <p className="text-xl md:text-2xl text-gray-300 mb-8 pixel-text subtitle-fade">
+            <div className="flex flex-col items-center justify-center mb-8">
+              <div className="relative">
+                {/* Animated, slanted red exclamation points */}
+                <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 flex space-x-1 animate-bounce">
+                  <span style={{ color: '#ff2d2d', fontSize: '2.5rem', transform: 'rotate(-20deg)', fontWeight: 'bold' }}>!</span>
+                  <span style={{ color: '#ff2d2d', fontSize: '2rem', transform: 'rotate(-10deg)', fontWeight: 'bold' }}>!</span>
+                  <span style={{ color: '#ff2d2d', fontSize: '1.5rem', transform: 'rotate(10deg)', fontWeight: 'bold' }}>!</span>
+                </div>
+                <img
+                  src="https://jginylwkzglmsrqcpxje.supabase.co/storage/v1/object/sign/random/shi.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9jYzU0MmEyZC04M2NmLTQ4NWQtYWU0Zi1iMTk0YmI0YzQ5MmIiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJyYW5kb20vc2hpLnBuZyIsImlhdCI6MTc1MTkxNjc5MiwiZXhwIjoxNzgzNDUyNzkyfQ.7B_14ywGvQ-qzUzpJleSGT1nZMpBnVfFud-G1q8ZP4c"
+                  alt="Bonk Mascot"
+                  className="w-48 h-48 rounded-full shadow-lg border-4 border-white bg-gradient-to-br from-white/90 via-[#f56d14]/80 to-[#f56d14]"
+                  style={{ objectFit: 'cover' }}
+                />
+              </div>
+            </div>
+            <p className="text-xl md:text-2xl text-gray-300 mb-8 pixel-text subtitle-fade text-white text-outline">
               <TypewriterText 
-                text="TALK TO WHO JEETS, OR HODLS IN REAL TIME..." 
+                text="TALK TO WHO BONKS, OR HODLS IN REAL TIME..." 
                 speed={80}
                 delay={500}
               />
             </p>
           </div>
           
-          <div className="border-2 border-white bg-black p-6 mb-12 pixel-border content-slide">
-            <p className="text-lg md:text-xl max-w-3xl mx-auto leading-relaxed pixel-text min-h-[3rem] flex items-center justify-center">
-              <TypewriterText 
-                text="OWN TOKENS TO ENTER THE PROXIMITY CHAT" 
-                speed={60}
-                delay={3000}
-              />
-            </p>
-          </div>
-
           {!isConnected && (
-            <div className="border-2 border-yellow-400 bg-black p-4 mb-8 pixel-border">
+            <div className="border-2 border-white bg-black p-4 mb-8 pixel-border">
               <div className="flex items-center justify-center space-x-2">
-                <Wallet className="w-5 h-5 text-yellow-400" />
-                <p className="text-yellow-400 pixel-text font-bold">
-                  CONNECT WALLET TO ACCESS PROXIMITY CHAT
+                <Wallet className="w-5 h-5 text-white" />
+                <p className="text-white text-outline pixel-text font-bold">
+                  CONNECT WALLET TO ACCESS BONKCHAT
                 </p>
               </div>
             </div>
@@ -543,7 +537,7 @@ function LandingPage({ onWalletConnected }: { onWalletConnected: () => void }) {
                   onClick={onWalletConnected}
                   className="px-8 py-4 border-2 border-white bg-black text-white hover:bg-white hover:text-black transition-all duration-300 pixel-text transform hover:scale-105 flex items-center justify-center space-x-2 font-bold text-lg"
                 >
-                  <span>ENTER PROXIMITY CHAT</span>
+                  <span>ENTER BONKCHAT</span>
                 </button>
                 <button
                   onClick={disconnectWallet}
@@ -578,7 +572,7 @@ function LandingPage({ onWalletConnected }: { onWalletConnected: () => void }) {
             <FeatureCard
               icon={<Shield className="w-12 h-12" />}
               title="VERIFIED HOLDERS ONLY"
-              description="SMART CONTRACT VERIFICATION ENSURES ONLY REAL COIN HOLDERS WITH TOKENS CAN ENTER THE PROXIMITY"
+              description="SMART CONTRACT VERIFICATION ENSURES ONLY REAL COIN HOLDERS WITH TOKENS CAN ENTER THE BONKCHAT"
             />
             <FeatureCard
               icon={<MessageCircle className="w-12 h-12" />}
@@ -694,7 +688,7 @@ function VoiceChatInterface({
         {/* Server Header */}
         <div className="p-4 border-b-4 border-white bg-black pixel-border">
           <PixelatedText 
-            text="$PROXIMITY CHAT" 
+            text="$BONKCHAT CHAT" 
             className="text-lg font-bold text-white pixel-text mb-2"
           />
           <p className="text-sm text-gray-400 pixel-text">1M+ TOKEN HOLDERS</p>
@@ -854,7 +848,7 @@ function VoiceChatInterface({
         {/* Chat Header */}
         <div className="p-4 border-b-4 border-white bg-black pixel-border flex items-center">
           <Hash className="w-6 h-6 mr-2 text-white" />
-          <h3 className="font-bold text-white pixel-text">#PROXIMITY-CHAT</h3>
+          <h3 className="font-bold text-white pixel-text">#BONKCHAT-CHAT</h3>
           <div className="ml-auto flex items-center space-x-4">
             <div className="flex items-center text-sm border-2 border-white bg-black px-3 py-1 pixel-border">
               <Users className="w-4 h-4 mr-2 text-white" />
@@ -878,7 +872,7 @@ function VoiceChatInterface({
                       {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
                   </div>
-                  <p className="text-gray-300 pixel-text group-hover:text-black break-words">{msg.message}</p>
+                  <p className="text-white font-bold pixel-text break-words">{msg.message}</p>
                 </div>
               </div>
             </div>

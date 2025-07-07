@@ -5,8 +5,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
 
 body {
-  font-family: 'Orbitron', monospace;
-  background: #000;
+  background: linear-gradient(135deg, #FF9800 0%, #FFD600 100%);
+  min-height: 100vh;
+  font-family: 'Press Start 2P', 'VT323', 'Fira Mono', monospace, sans-serif;
 }
 
 .pixel-text {
@@ -303,6 +304,8 @@ body {
 .pixel-border {
   border-style: solid;
   image-rendering: pixelated;
+  border-radius: 0.5rem;
+  border-width: 4px;
 }
 
 /* Pixel squares for animated elements */
@@ -331,4 +334,14 @@ h1, h2, h3, h4, h5, h6, p, span, div, button, a, input {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* Remove any black backgrounds from previous styles */
+.bg-black {
+  background: transparent !important;
+}
+
+.text-outline {
+  -webkit-text-stroke: 2px white;
+  text-stroke: 2px white;
 }
